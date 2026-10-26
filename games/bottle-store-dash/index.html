@@ -884,20 +884,21 @@ canvas { display: block; width: 100%; height: 100%; }
   }
 
   /* ---------- Input ---------- */
-  // Swipe to steer: each swipe moves one lane; keep dragging to move another.
+  // Swipe to steer: one swipe moves exactly one lane, however long the swipe is.
+  // Lift your finger and swipe again to move another lane.
   let swipe = null;
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
-    swipe = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    swipe = { id: e.pointerId, x: e.clientX, y: e.clientY, used: false };
     try { cv.setPointerCapture(e.pointerId); } catch (_) {}
   });
   cv.addEventListener('pointermove', e => {
-    if (!swipe || e.pointerId !== swipe.id) return;
+    if (!swipe || swipe.used || e.pointerId !== swipe.id) return;
     const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
     const th = Math.max(22, W * 0.06);
     if (Math.abs(dx) > th && Math.abs(dx) > Math.abs(dy) * 0.8) {
       steer(dx < 0 ? -1 : 1);
-      swipe.x = e.clientX; swipe.y = e.clientY;
+      swipe.used = true;
     }
   });
   const endSwipe = e => { if (swipe && e.pointerId === swipe.id) swipe = null; };
@@ -938,6 +939,8 @@ canvas { display: block; width: 100%; height: 100%; }
     renderMute();
     requestAnimationFrame(t => { last = t; requestAnimationFrame(frame); });
   }
+  // Only for automated tests: open the page with ?test in the address to read the game state.
+  if (new URLSearchParams(location.search).has('test')) window.__bsd = { state: () => S };
   window.claude?.hot?.snapshot?.(() => ({ best }));
   window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
 })();

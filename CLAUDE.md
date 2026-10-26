@@ -45,7 +45,7 @@ The app is called **South African Brainrot**. It runs through Vite (dev tool onl
 
 ## First game: Bottle Store Dash
 
-It's Friday at 17:12 and the player must reach the bottle store before it closes at 18:00 to buy quarts. The road is 5 km long, and a run takes about 78 real seconds at base speed. Swipe left or right to change between 3 lanes; arrow keys and A/D also work, and P or Esc pauses.
+It's Friday at 17:12 and the player must reach the bottle store before it closes at 18:00 to buy quarts. The road is 5 km long, and a run takes about 78 real seconds at base speed. Swipe left or right to change between 3 lanes: one swipe moves exactly one lane however long it is, so going two lanes takes two swipes (the developer found multi-lane swipes too sensitive on the phone). Arrow keys and A/D also work, and P or Esc pauses. With `?test` in the address, `window.__bsd.state()` exposes the game state for headless tests.
 
 - **Potholes:** each hit pops a tyre and slows you down. Losing all four tyres ends the run.
 - **Taxis:** stop anywhere, sometimes across two lanes, with hazards flashing and hooting. A crash stops you briefly and pops a tyre.
