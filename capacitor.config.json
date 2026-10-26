@@ -1,0 +1,11 @@
+{
+  "appId": "com.ckruger.sabrainrot",
+  "appName": "South African Brainrot",
+  "webDir": "dist",
+  "plugins": {
+    "SystemBars": {
+      "style": "DARK",
+      "initialViewportFitValueHint": "cover"
+    }
+  }
+}

@@ -29,8 +29,19 @@ The app is called **South African Brainrot**. It runs through Vite (dev tool onl
 - `public/fonts/` holds the bundled Bungee and Archivo font files (Latin only, woff2) and their licences, which must ship with the app. Files in `public/` are copied as-is; reference them with a leading slash (`/fonts/...`) and Vite rewrites the path on build.
 - `vite.config.js` lists every page. **Adding a game:** create `games/<name>/index.html`, link `../../shared/fonts.css`, add a menu link back, add the page to `vite.config.js`, and turn its "Coming soon" card on the home page into a link. Use relative links between pages (never a leading slash) so they work inside the Android app.
 - `npm run dev` starts the dev server with instant reload. It prints a Local address (PC) and a Network address (phone on the same Wi-Fi).
-- `npm run build` writes the finished game to `dist/` with relative paths, ready for Capacitor later. `npm run preview` serves that build to check it.
-- `node_modules/` and `dist/` are generated and ignored by Git.
+- `npm run build` writes the finished game to `dist/` with relative paths. `npm run preview` serves that build to check it.
+- `node_modules/`, `dist/` and `apk/` are generated and ignored by Git.
+
+## Android app (Capacitor)
+
+- `npm run apk` (runs `scripts/build-apk.mjs`) builds the games, copies them into `android/` with `cap sync`, builds a debug APK with Gradle, and copies it to `apk/South-African-Brainrot.apk`. It uses Android Studio's bundled Java (`C:\Program Files\Android\Android Studio\jbr`, Java 25) unless `JAVA_HOME` is set.
+- `capacitor.config.json`: app ID `com.ckruger.sabrainrot` (can still change before the first Google Play upload, permanent after), name "South African Brainrot", `webDir: dist`. `SystemBars.style: DARK` gives light status-bar icons on the dark pages.
+- **Gradle is pinned to 9.5.1** in `android/gradle/wrapper/gradle-wrapper.properties`. Gradle 8.14 can't run on Java 25, and Gradle 9.6+ broke the Android Gradle Plugin 8.13 that Capacitor 8 uses. Don't change it without testing a build.
+- `android/app/src/main/AndroidManifest.xml`: **no INTERNET permission** (removed on purpose: the app must never go online) and portrait only. Keep it that way; check with `aapt dump permissions` after adding any plugin.
+- `@capacitor/app` makes the phone's Back button go back a page (game to menu) instead of closing the app.
+- Pages extend under the status bar (`viewport-fit=cover`); `env(safe-area-inset-*)` works in the app's WebView, so keep using it for top and bottom padding.
+- Testing the app: the `Pixel_3` emulator boots headless (`emulator -avd Pixel_3 -no-window`). Debug builds allow the WebView to be inspected via `adb forward` to `webview_devtools_remote_<pid>`. When the developer's phone is plugged in, adb sees two devices, so always pass `-s <serial>`. Never install on the developer's phone without asking.
+- Still Capacitor defaults: the app icon and the splash screen (blue X). Release builds for Google Play need a signing key; not set up yet.
 
 ## First game: Bottle Store Dash
 
@@ -67,7 +78,7 @@ Saturday, 05:00. First-person view out of your bedroom window with a slingshot. 
 ## Roadmap (in order)
 
 1. Move the prototype into a Vite project with plain canvas, split into modules.
-2. Wrap it as an Android app with Capacitor.
+2. ~~Wrap it as an Android app with Capacitor.~~ Done (debug APK). Next: own app icon and splash screen, then a signed release build.
 3. Grow it into a collection of SA mini-games. A simple card menu exists; it may later become a fun hub such as a taxi rank or kasi map where each spot opens a game.
 4. Add short cutscenes, for example the traffic officer saying "Eish, it's very hot today hey chief" before a run. (Hadeda Alarm Clock already has one.)
 5. Add one shared save file for best scores, settings and unlocks, where finishing one game opens the next. Copy across the existing `bsd-best` and `hac-best` scores so nobody loses them.
