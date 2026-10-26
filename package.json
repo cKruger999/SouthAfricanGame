@@ -1,0 +1,14 @@
+{
+  "name": "south-african-game",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build --base=./",
+    "preview": "vite preview --host --base=./"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  }
+}

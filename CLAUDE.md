@@ -20,7 +20,12 @@ A free mobile game app full of affectionate South African meme humour. It has no
 
 ## Current state
 
-`index.html` is a working prototype: one file holding the canvas, JavaScript, drawing and UI. `fonts/` holds the bundled Bungee and Archivo font files (Latin only, woff2) and their licences, which must ship with the app.
+`index.html` is a working prototype: one file holding the canvas, JavaScript, drawing and UI. It runs through Vite (dev tool only; Capacitor comes later, once the game is further along).
+
+- `public/fonts/` holds the bundled Bungee and Archivo font files (Latin only, woff2) and their licences, which must ship with the app. Files in `public/` are copied as-is; reference them with a leading slash (`/fonts/...`) and Vite rewrites the path on build.
+- `npm run dev` starts the dev server with instant reload. It prints a Local address (PC) and a Network address (phone on the same Wi-Fi).
+- `npm run build` writes the finished game to `dist/` with relative paths, ready for Capacitor later. `npm run preview` serves that build to check it.
+- `node_modules/` and `dist/` are generated and ignored by Git.
 
 ## First game: Bottle Store Dash
 
