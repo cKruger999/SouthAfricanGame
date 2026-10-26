@@ -4,10 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bottle Store Dash</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Archivo:wght@500;700;800&display=swap">
 <style>
+/* Fonts are bundled in fonts/ (SIL Open Font License) so the game never needs the network. */
+@font-face { font-family: "Bungee"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/bungee-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/archivo-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 700; font-display: swap; src: url(fonts/archivo-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 800; font-display: swap; src: url(fonts/archivo-latin-800-normal.woff2) format("woff2"); }
 [hidden] { display: none !important; }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: border-box; }
 /* Layout: one-screen arcade "windscreen" framed on a tar-black page; HUD rides the top, panels drop in like taxi signwriting. Single committed dark look. */
