@@ -4,12 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bottle Store Dash</title>
+<link rel="stylesheet" href="../../shared/fonts.css">
 <style>
-/* Fonts are bundled in fonts/ (SIL Open Font License) so the game never needs the network. */
-@font-face { font-family: "Bungee"; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/bungee-latin-400-normal.woff2) format("woff2"); }
-@font-face { font-family: "Archivo"; font-style: normal; font-weight: 500; font-display: swap; src: url(/fonts/archivo-latin-500-normal.woff2) format("woff2"); }
-@font-face { font-family: "Archivo"; font-style: normal; font-weight: 700; font-display: swap; src: url(/fonts/archivo-latin-700-normal.woff2) format("woff2"); }
-@font-face { font-family: "Archivo"; font-style: normal; font-weight: 800; font-display: swap; src: url(/fonts/archivo-latin-800-normal.woff2) format("woff2"); }
 [hidden] { display: none !important; }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: border-box; }
 /* Layout: one-screen arcade "windscreen" framed on a tar-black page; HUD rides the top, panels drop in like taxi signwriting. Single committed dark look. */
@@ -141,6 +137,9 @@ canvas { display: block; width: 100%; height: 100%; }
   padding: 12px 16px; cursor: pointer; box-shadow: 0 4px 0 var(--ink);
 }
 .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.btn-alt { display: block; text-align: center; text-decoration: none; font-size: 16px; padding: 9px 16px; background: transparent; }
+.menu-link { align-self: center; font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brick); text-decoration: none; padding: 4px 8px; }
+.menu-link:focus-visible { outline: 3px solid var(--vest); outline-offset: 2px; border-radius: 6px; }
 .hint { font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; }
 
 /* Officer slip */
@@ -198,6 +197,7 @@ canvas { display: block; width: 100%; height: 100%; }
       </ul>
       <button class="btn" id="startBtn" type="button">Start the run</button>
       <div class="hint" id="bestLine">Swipe left or right to change lanes. Arrow keys work too.</div>
+      <a class="menu-link" href="../../index.html">← Back to menu</a>
     </div>
   </div>
 
@@ -210,6 +210,7 @@ canvas { display: block; width: 100%; height: 100%; }
       <h2>Paused</h2>
       <p>The clock's stopped. Just this once.</p>
       <button class="btn" id="resumeBtn" type="button">Carry on</button>
+      <a class="btn btn-alt" href="../../index.html">Quit to menu</a>
     </div>
   </div>
 </div>
@@ -866,6 +867,7 @@ canvas { display: block; width: 100%; height: 100%; }
       </div>
       ${kind === 'win' ? `<div class="score"><span>${newBest ? 'New best' : 'Score'}</span><b>${score}</b></div>` : ''}
       <button class="btn" id="againBtn" type="button">${kind === 'win' ? 'Next Friday' : 'Try again'}</button>
+      <a class="btn btn-alt" href="../../index.html">Menu</a>
       ${best ? `<div class="hint">Best score: ${best}</div>` : ''}`;
     $('#overView').hidden = false;
     $('#againBtn').addEventListener('click', start);

@@ -1,0 +1,6 @@
+/* Fonts are bundled in public/fonts/ (SIL Open Font License) so the app never needs the network.
+   Every page links this file instead of declaring the fonts itself. */
+@font-face { font-family: "Bungee"; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/bungee-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 500; font-display: swap; src: url(/fonts/archivo-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 700; font-display: swap; src: url(/fonts/archivo-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 800; font-display: swap; src: url(/fonts/archivo-latin-800-normal.woff2) format("woff2"); }

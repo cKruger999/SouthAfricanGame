@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>South African Brainrot</title>
+<link rel="stylesheet" href="shared/fonts.css">
+<style>
+/* Home: a tar-black page with one column of game cards, styled like taxi signwriting to match the games. */
+:root {
+  --ink: #17151a;
+  --tar: #34323a;
+  --yellow: #f4c21b;
+  --brick: #d9482b;
+  --paper: #fff4dc;
+  --vest: #c8f23c;
+  --muted: #6d6152;
+  --display: "Bungee", "Impact", "Arial Black", sans-serif;
+  --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--body);
+  margin: 0;
+  min-height: 100vh;
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+main { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+/* Header */
+.eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--vest); }
+h1 { font-family: var(--display); font-weight: 400; font-size: 40px; line-height: 0.95; margin: 6px 0 10px; color: var(--paper); text-wrap: balance; }
+h1 span { display: block; color: var(--yellow); }
+.tagline { margin: 0; font-size: 15px; line-height: 1.45; font-weight: 500; color: #d8ccb4; }
+.stripe { height: 10px; border-radius: 5px; background: repeating-linear-gradient(-45deg, var(--yellow) 0 14px, var(--ink) 14px 28px); }
+
+h2 { font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--yellow); margin: 0 0 -10px; }
+.games { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+/* Playable game card */
+.card {
+  display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: center;
+  background: var(--paper); color: var(--ink);
+  border: 3px solid var(--ink); border-radius: 16px;
+  box-shadow: 0 0 0 2px var(--yellow), 6px 6px 0 2px var(--yellow);
+  padding: 12px; text-decoration: none;
+}
+.card:active { transform: translate(3px, 3px); box-shadow: 0 0 0 2px var(--yellow), 3px 3px 0 2px var(--yellow); }
+.card:focus-visible { outline: 3px solid var(--vest); outline-offset: 6px; }
+.card svg { width: 92px; height: 92px; display: block; border-radius: 10px; }
+.card .info { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.card .name { font-family: var(--display); font-size: 22px; line-height: 1; color: var(--brick); }
+.card .blurb { font-size: 14px; line-height: 1.35; font-weight: 500; }
+.card .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 3px; }
+.card .best { font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.card .play { font-family: var(--display); font-size: 15px; background: var(--yellow); border: 2px solid var(--ink); border-radius: 9px; padding: 5px 12px; }
+
+/* Locked "coming soon" cards */
+.soon {
+  display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: center;
+  border: 2px dashed #4a4650; border-radius: 14px; padding: 10px 12px; color: #b9ad97;
+}
+.soon .lock { width: 52px; height: 52px; border-radius: 10px; background: var(--tar); display: grid; place-items: center; font-family: var(--display); font-size: 24px; color: #6a6470; }
+.soon .name { font-weight: 800; font-size: 15px; color: var(--paper); }
+.soon .blurb { font-size: 13px; line-height: 1.35; margin-top: 2px; }
+.soon .tag { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brick); margin-top: 4px; }
+
+footer { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">No ads · No tracking · Works offline</div>
+    <h1>South African <span>Brainrot</span></h1>
+    <p class="tagline">Lekker little games about everyday Mzansi chaos. Pick one and go.</p>
+  </header>
+
+  <div class="stripe" aria-hidden="true"></div>
+
+  <h2>Games</h2>
+  <ul class="games">
+    <li>
+      <a class="card" href="games/bottle-store-dash/index.html">
+        <svg viewBox="0 0 92 92" aria-hidden="true">
+          <rect width="92" height="92" fill="#b98d4a"/>
+          <rect x="14" width="64" height="92" fill="#34323a"/>
+          <rect x="17" width="3" height="92" fill="#f4c21b"/>
+          <rect x="72" width="3" height="92" fill="#f4c21b"/>
+          <g fill="#efe9dc" opacity="0.85"><rect x="44.5" y="2" width="3" height="14"/><rect x="44.5" y="30" width="3" height="14"/><rect x="44.5" y="58" width="3" height="14"/><rect x="44.5" y="86" width="3" height="14"/></g>
+          <ellipse cx="60" cy="24" rx="9" ry="6" fill="#1c1b1f"/>
+          <ellipse cx="60" cy="24.5" rx="6.5" ry="4" fill="#4b3b2b"/>
+          <g transform="translate(20 46)">
+            <rect x="-1" y="6" width="4" height="8" rx="1.5" fill="#121114"/><rect x="19" y="6" width="4" height="8" rx="1.5" fill="#121114"/>
+            <rect x="-1" y="25" width="4" height="8" rx="1.5" fill="#121114"/><rect x="19" y="25" width="4" height="8" rx="1.5" fill="#121114"/>
+            <rect x="0" y="0" width="22" height="38" rx="7" fill="#d9482b"/>
+            <rect x="3" y="8" width="16" height="7" rx="2.5" fill="#a6d6ea"/>
+            <rect x="4" y="18" width="14" height="11" rx="2.5" fill="#a8331d"/>
+            <rect x="3" y="0.8" width="4" height="2" rx="1" fill="#fff1a8"/><rect x="15" y="0.8" width="4" height="2" rx="1" fill="#fff1a8"/>
+          </g>
+        </svg>
+        <div class="info">
+          <div class="name">Bottle Store Dash</div>
+          <div class="blurb">Friday, 17:12. Five km of potholes and taxis between you and the quarts.</div>
+          <div class="foot"><span class="best" id="bsdBest">Not played yet</span><span class="play">Play</span></div>
+        </div>
+      </a>
+    </li>
+    <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Hadeda Alarm Clock</div><div class="blurb">It's 5am. They're on the roof again.</div><div class="tag">Coming soon</div></div></li>
+    <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Braai Master</div><div class="blurb">Keep the chops off the coals and the uncles off the tongs.</div><div class="tag">Coming soon</div></div></li>
+    <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Load Shedding Dash</div><div class="blurb">Two hours of power. Charge everything.</div><div class="tag">Coming soon</div></div></li>
+    <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Taxi Rank Rush</div><div class="blurb">There's always space for four more.</div><div class="tag">Coming soon</div></div></li>
+    <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Car Guard Hero</div><div class="blurb">"I'll watch it nicely for you, boss."</div><div class="tag">Coming soon</div></div></li>
+  </ul>
+
+  <footer>Made with love in Mzansi.<br>No ads. No purchases. Ever.</footer>
+</main>
+<script>
+  // Show each game's best score on its card (saved by the game itself on this device).
+  // pageshow also fires when coming back from a game, so the score is never stale.
+  window.addEventListener('pageshow', () => {
+    try {
+      const best = +localStorage.getItem('bsd-best') || 0;
+      if (best) document.getElementById('bsdBest').textContent = `Best: ${best}`;
+    } catch (e) {}
+  });
+</script>
+</body>
+</html>

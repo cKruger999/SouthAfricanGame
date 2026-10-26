@@ -20,9 +20,13 @@ A free mobile game app full of affectionate South African meme humour. It has no
 
 ## Current state
 
-`index.html` is a working prototype: one file holding the canvas, JavaScript, drawing and UI. It runs through Vite (dev tool only; Capacitor comes later, once the game is further along).
+The app is called **South African Brainrot**. It runs through Vite (dev tool only; Capacitor comes later, once the game is further along).
 
+- `index.html` is the home menu: a card per game (Bottle Store Dash playable, the rest "Coming soon"). It shows each game's best score from `localStorage`.
+- `games/bottle-store-dash/index.html` is the Bottle Store Dash prototype: one file holding the canvas, JavaScript, drawing and UI. Its start, pause and game-over screens link back to the menu (`../../index.html`).
+- `shared/fonts.css` declares the fonts; every page links it rather than declaring fonts itself.
 - `public/fonts/` holds the bundled Bungee and Archivo font files (Latin only, woff2) and their licences, which must ship with the app. Files in `public/` are copied as-is; reference them with a leading slash (`/fonts/...`) and Vite rewrites the path on build.
+- `vite.config.js` lists every page. **Adding a game:** create `games/<name>/index.html`, link `../../shared/fonts.css`, add a menu link back, add the page to `vite.config.js`, and turn its "Coming soon" card on the home page into a link. Use relative links between pages (never a leading slash) so they work inside the Android app.
 - `npm run dev` starts the dev server with instant reload. It prints a Local address (PC) and a Network address (phone on the same Wi-Fi).
 - `npm run build` writes the finished game to `dist/` with relative paths, ready for Capacitor later. `npm run preview` serves that build to check it.
 - `node_modules/` and `dist/` are generated and ignored by Git.
@@ -49,7 +53,7 @@ It's Friday at 17:12 and the player must reach the bottle store before it closes
 
 1. Move the prototype into a Vite project with plain canvas, split into modules.
 2. Wrap it as an Android app with Capacitor.
-3. Grow it into a collection of SA mini-games with a fun hub menu, such as a taxi rank or kasi map where each spot opens a game.
+3. Grow it into a collection of SA mini-games. A simple card menu exists; it may later become a fun hub such as a taxi rank or kasi map where each spot opens a game.
 4. Add short cutscenes, for example the traffic officer saying "Eish, it's very hot today hey chief" before a run.
 5. Add one shared save file for best scores, settings and unlocks, where finishing one game opens the next. Copy across the existing `bsd-best` score so nobody loses it.
 6. Possible future games: Hadeda Alarm Clock, Braai Master, Load Shedding Dash, Taxi Rank Rush, Car Guard Hero.
