@@ -60,13 +60,13 @@ It's Friday at 17:12 and the player must reach the bottle store before it closes
 Saturday, 05:00. First-person view out of your bedroom window with a slingshot. Last until 06:00 (80 real seconds) by keeping the hadedas quiet.
 
 - **Cutscene** (about 7 s, tap or Skip to skip; only before the first run): black screen, "Saturday. 04:58.", the hadeda screams, eyes open, curtains, burglar bars, window, slingshot, GO. It needs the Wake up tap first because phones block sound until the screen is touched.
-- **Aiming:** touch where the stone should go, drag to adjust, let go to fire. Letting go below `cancelY` (on the slingshot) cancels. The stone takes 0.3 s to arrive, so flying birds need a lead.
+- **Aiming:** a crosshair (`S.cross`) stays on screen. Dragging anywhere moves it like a touchpad (`AIM_SPEED` 1.35× the finger), so the finger never hides the target; letting go fires (a tap fires at the crosshair). It can't go below `aimMaxY` (top of the slingshot). It wobbles by up to about `SWAY` U (`aimPoint()`), and the stone goes where the wobble is at release, so aim takes timing. There's no cancel: the developer wanted aiming to be a skill with real misses. The stone takes 0.3 s to arrive, so flying birds need a lead. Hit areas have only a 4 px allowance (`pad` in `birdHit`).
 - **Hadedas** land on perches (neighbour's ridge, power lines, tree, water tank, your dish, your gutter), shout, and sometimes move. A bonked hadeda flies off offended, never hurt. Perched = 100, flying = 150, plus a combo bonus.
 - **Racket meter:** shouting birds fill it (closer = louder, flying birds count half). Full = "Whole street's up" and the run ends.
 - **Ma's slippers (3):** hitting your own roof, the dish or next door's car loses one and a point penalty. None left = "Confiscated".
 - **Fairness:** a hadeda is always hittable; in `resolve()` a bird beats whatever it sits on (like the dish). Keep that order.
-- **Balance** (checked with simulated players): doing nothing loses in about 33 s; good aim survives with the racket under about 40%; slow, inaccurate play mostly loses.
-- **Test hook:** with `?test` in the address, `window.__hac` exposes `state`, `layout`, `update`, `fire`, `start` and `skipCut`, so headless tests can fast-forward games. It doesn't exist otherwise.
+- **Balance** (checked with simulated players that drag the crosshair at human speed): fewer hadedas than before (`maxAlive` 2 rising to 6, spawns every 2.8 s falling to 1.25 s), but each one is louder (racket `shouting * 0.1`). Doing nothing loses in about 32 s; good aim always survives, but the racket can reach 50–80%; sloppy aim (about 94% hits) nearly always survives; casual play (about 78% hits) loses about a quarter of runs near the end. Real players react more slowly than the bots, so it plays harder than these numbers.
+- **Test hook:** with `?test` in the address, `window.__hac` exposes `state`, `layout`, `update`, `fire`, `start`, `skipCut`, `aimStart`, `aimMove`, `aimEnd` and `aimPoint`, so headless tests can fast-forward games and aim like a finger. It doesn't exist otherwise.
 - **Saved data:** `localStorage` keys `hac-best` and `hac-muted`.
 
 ## Known issues in the prototype

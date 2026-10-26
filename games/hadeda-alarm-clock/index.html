@@ -163,7 +163,7 @@ canvas { display: block; width: 100%; height: 100%; }
 <body>
 
 <div id="game">
-  <canvas id="cv" aria-label="View from your bedroom window. Touch where you want the stone to go, then let go to fire."></canvas>
+  <canvas id="cv" aria-label="View from your bedroom window. Drag anywhere to move the crosshair, let go to fire."></canvas>
 
   <div class="hud" id="hud" hidden>
     <div class="hud-row">
@@ -199,7 +199,7 @@ canvas { display: block; width: 100%; height: 100%; }
         <li><i class="dot slip"></i><span><b>Ma's slippers.</b> Hit your roof, the dish or next door's car and she loses one. Lose all three and it's confiscated.</span></li>
       </ul>
       <button class="btn" id="startBtn" type="button">Wake up</button>
-      <div class="hint" id="bestLine">Touch where you want the stone to go, then let go to fire.</div>
+      <div class="hint" id="bestLine">Drag anywhere to move the crosshair, let go to fire.</div>
       <a class="menu-link" href="../../index.html">← Back to menu</a>
     </div>
   </div>
@@ -228,6 +228,8 @@ canvas { display: block; width: 100%; height: 100%; }
   const RUN_SEC = 80;          // real seconds from 05:00 to 06:00
   const SHOT_TIME = 0.3;       // seconds a stone takes to arrive, so moving birds need a lead
   const RELOAD = 0.45;
+  const AIM_SPEED = 1.35;      // the crosshair moves this much further than your finger
+  const SWAY = 15;             // how far the half-asleep crosshair wobbles (in U)
   const SLIPPERS = 3;
   const CUT_LEN = 7.2;
 
@@ -265,7 +267,7 @@ canvas { display: block; width: 100%; height: 100%; }
       tree: { x: W * 0.08, y: H * 0.3, r: W * 0.17 },
       dish: { x: W * 0.8, y: roofY - H * 0.05, r: W * 0.085 },
       sling: { x: W / 2, y: H * 0.875, spread: Math.max(50, W * 0.16) },
-      cancelY: H * 0.85
+      aimMaxY: H * 0.85     // the crosshair can't go lower than the top of the slingshot
     };
     L.perches = [
       { key: 'ridge1', x: W * 0.3, y: L.ridgeY, s: 0.6 },
@@ -292,6 +294,7 @@ canvas { display: block; width: 100%; height: 100%; }
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     layout();
     if (S) for (const b of S.birds) if (b.state === 'perch') { const p = L.perches[b.perch]; b.x = p.x; b.y = p.y; b.s = p.s; }
+    if (S) moveCross(0, 0);
   }
 
   /* ---------- Sound (all generated, no sound files) ---------- */
@@ -389,7 +392,7 @@ canvas { display: block; width: 100%; height: 100%; }
     return {
       mode, t: 0, cutT: 0, cutFired: 0, clock: START - 2, progress: 0,
       score: 0, slippers: SLIPPERS, racket: 0, combo: 0, bestCombo: 0, bonks: 0, shots: 0, accidents: 0,
-      birds: [newBird('gutterR')], stones: [], parts: [], pops: [],
+      birds: [newBird('gutterR')], stones: [], parts: [], pops: [], cross: { x: W / 2, y: H * 0.4 },
       spawnT: 2.5, reload: 0, shake: 0, dishSkew: 0, alarmT: 0, endT: 0, endKind: null, slipT: -1
     };
   }
@@ -482,7 +485,41 @@ canvas { display: block; width: 100%; height: 100%; }
       }
     }
     S.birds = S.birds.filter(b => b.x > -260 * U && b.x < W + 260 * U && b.y > -150 * U);
-    if (playing) S.racket = clamp(S.racket + (shouting * 0.075 - 0.03) * dt + (S.alarmT > 0 ? 0.05 * dt : 0), 0, 1);
+    if (playing) S.racket = clamp(S.racket + (shouting * 0.1 - 0.03) * dt + (S.alarmT > 0 ? 0.05 * dt : 0), 0, 1);
+  }
+
+  /* ---------- Aiming ----------
+     The crosshair stays on screen. Dragging anywhere moves it like a laptop touchpad
+     (so your finger never hides the target), and letting go fires. It wobbles a little,
+     because nobody aims steady at 05:00, so the stone goes where the wobble is when you let go. */
+  function moveCross(dx, dy) {
+    S.cross.x = clamp(S.cross.x + dx * AIM_SPEED, 0, W);
+    S.cross.y = clamp(S.cross.y + dy * AIM_SPEED, H * 0.03, L.aimMaxY);
+  }
+  function aimPoint() {
+    const t = S.t, a = SWAY * U;
+    return {
+      x: S.cross.x + (Math.sin(t * 1.6) + 0.5 * Math.sin(t * 3.7 + 1)) * a * 0.7,
+      y: S.cross.y + (Math.sin(t * 2.1 + 2) + 0.5 * Math.sin(t * 3.1)) * a * 0.6
+    };
+  }
+  const canAim = () => S.mode === 'play' && !paused && S.endT <= 0;
+  function aimStart(id, x, y) {
+    if (!canAim()) return;
+    aim = { id, x, y };
+    sfx.stretch();
+  }
+  function aimMove(x, y) {
+    if (!aim) return;
+    moveCross(x - aim.x, y - aim.y);
+    aim.x = x; aim.y = y;
+  }
+  function aimEnd() {
+    if (!aim) return false;
+    aim = null;
+    if (!canAim()) return false;
+    const p = aimPoint();
+    return fire(p.x, p.y);
   }
 
   /* ---------- Shooting ---------- */
@@ -497,7 +534,7 @@ canvas { display: block; width: 100%; height: 100%; }
   }
   // the hadeda wins over whatever it sits on, so a bird on the dish is always fair game
   function birdHit(b, x, y) {
-    const k = b.s * U, pad = 8;
+    const k = b.s * U, pad = 4;   // a little forgiveness around the bird
     const dx = (x - b.x) / (36 * k + pad), dy = (y - (b.y - 27 * k)) / (22 * k + pad);
     let e = dx * dx + dy * dy;
     const hx = x - (b.x + b.dir * 24 * k), hy = y - (b.y - 36 * k), hr = 14 * k + pad;
@@ -577,7 +614,7 @@ canvas { display: block; width: 100%; height: 100%; }
   function beginPlay() {
     S.mode = 'play'; S.clock = START;
     $('#skipBtn').hidden = true; $('#hud').hidden = false;
-    addPop('TOUCH TO AIM', W / 2, H * 0.5, '#f4c21b', 18);
+    addPop('DRAG TO AIM', W / 2, H * 0.5, '#f4c21b', 18);
     addPop('LET GO TO FIRE', W / 2, H * 0.5 + 24 * U, '#f4c21b', 14);
   }
   function skipCut() { if (S && S.mode === 'cut') beginPlay(); }
@@ -602,11 +639,11 @@ canvas { display: block; width: 100%; height: 100%; }
       if (S.alarmT > 0) S.alarmT -= dt;
       S.spawnT -= dt;
       const alive = S.birds.filter(b => b.state !== 'bonked').length;
-      const maxAlive = 3 + Math.floor(S.progress * 4);
+      const maxAlive = 2 + Math.floor(S.progress * 4);
       if (S.spawnT <= 0 && S.endT <= 0) {
         if (S.progress > 0.35 && Math.random() < 0.18) spawnFlock();
         else if (alive < maxAlive) spawnBird();
-        S.spawnT = lerp(2.6, 1.15, S.progress) + rand(0, 0.8);
+        S.spawnT = lerp(2.8, 1.25, S.progress) + rand(0, 0.8);
       }
     }
     updateBirds(dt);
@@ -763,7 +800,7 @@ canvas { display: block; width: 100%; height: 100%; }
     const rise = S.mode === 'cut' ? (1 - ease(step(S.cutT, 5.5, 0.9))) * H * 0.4 : 0;
     let px = rest.x, py = rest.y;
     if (aim && S.mode === 'play') {
-      const dx = rest.x - aim.x, dy = rest.y - aim.y, d = Math.hypot(dx, dy) || 1, pull = Math.min(64 * U, 18 * U + d * 0.12);
+      const a = aimPoint(), dx = rest.x - a.x, dy = rest.y - a.y, d = Math.hypot(dx, dy) || 1, pull = Math.min(64 * U, 18 * U + d * 0.12);
       px += dx / d * pull; py += Math.max(0, dy / d * pull) + pull * 0.35;
     }
     return { rise, px, py };
@@ -789,17 +826,20 @@ canvas { display: block; width: 100%; height: 100%; }
     ctx.restore();
   }
   function drawAim() {
-    if (!aim || S.mode !== 'play') return;
-    const cancel = aim.y > L.cancelY, r = 24 * U;
-    ctx.lineWidth = 5 * U; ctx.strokeStyle = 'rgba(23,21,26,0.7)';
-    ctx.beginPath(); ctx.arc(aim.x, aim.y, r, 0, Math.PI * 2); ctx.stroke();
-    ctx.lineWidth = 2.5 * U; ctx.strokeStyle = cancel ? '#9aa0a6' : (S.reload > 0 ? '#f4c21b' : '#fff4dc');
-    ctx.beginPath(); ctx.arc(aim.x, aim.y, r, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(aim.x - r - 8 * U, aim.y); ctx.lineTo(aim.x - r + 8 * U, aim.y); ctx.moveTo(aim.x + r - 8 * U, aim.y); ctx.lineTo(aim.x + r + 8 * U, aim.y);
-    ctx.moveTo(aim.x, aim.y - r - 8 * U); ctx.lineTo(aim.x, aim.y - r + 8 * U);
-    ctx.stroke();
-    if (cancel) { ctx.fillStyle = '#fff4dc'; ctx.font = `800 ${12 * U + 2}px Archivo, Arial, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('LET GO TO CANCEL', aim.x, aim.y - r - 16 * U); }
+    if (S.mode !== 'play' || S.endT > 0) return;
+    // brighter and bigger while your finger is down; yellow while reloading
+    const { x, y } = aimPoint(), held = !!aim, r = (held ? 20 : 17) * U, tick = 9 * U;
+    const col = S.reload > 0 ? '#f4c21b' : '#fff4dc';
+    ctx.globalAlpha = held ? 1 : 0.6;
+    for (const [w, c] of [[5 * U, 'rgba(23,21,26,0.7)'], [2.2 * U, col]]) {
+      ctx.lineWidth = w; ctx.strokeStyle = c;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.moveTo(x - r - tick, y); ctx.lineTo(x - r + tick, y); ctx.moveTo(x + r - tick, y); ctx.lineTo(x + r + tick, y);
+      ctx.moveTo(x, y - r - tick); ctx.lineTo(x, y - r + tick); ctx.moveTo(x, y + r - tick); ctx.lineTo(x, y + r + tick);
+      ctx.stroke();
+    }
+    ctx.fillStyle = col; ell(x, y, 2.2 * U, 2.2 * U);
+    ctx.globalAlpha = 1;
   }
   function drawStones() {
     for (const st of S.stones) {
@@ -987,22 +1027,16 @@ canvas { display: block; width: 100%; height: 100%; }
   }
 
   /* ---------- Input ---------- */
-  // Touch where the stone should go, drag to adjust, let go to fire. Letting go on the slingshot cancels.
-  const pt = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  // Drag anywhere to move the crosshair, let go to fire (see Aiming above).
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
     if (S.mode === 'cut') { skipCut(); return; }
-    if (S.mode !== 'play' || paused || S.endT > 0) return;
-    aim = { id: e.pointerId, ...pt(e) };
-    try { cv.setPointerCapture(e.pointerId); } catch (_) {}
-    sfx.stretch();
+    if (aim) return;   // a second finger doesn't take over
+    aimStart(e.pointerId, e.clientX, e.clientY);
+    if (aim) try { cv.setPointerCapture(e.pointerId); } catch (_) {}
   });
-  cv.addEventListener('pointermove', e => { if (aim && e.pointerId === aim.id) Object.assign(aim, pt(e)); });
-  cv.addEventListener('pointerup', e => {
-    if (!aim || e.pointerId !== aim.id) return;
-    const a = aim; aim = null;
-    if (a.y <= L.cancelY) fire(a.x, a.y);
-  });
+  cv.addEventListener('pointermove', e => { if (aim && e.pointerId === aim.id) aimMove(e.clientX, e.clientY); });
+  cv.addEventListener('pointerup', e => { if (aim && e.pointerId === aim.id) aimEnd(); });
   cv.addEventListener('pointercancel', e => { if (aim && e.pointerId === aim.id) aim = null; });
   window.addEventListener('keydown', e => { if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') setPaused(!paused); });
   $('#startBtn').addEventListener('click', () => start(true));
@@ -1027,10 +1061,10 @@ canvas { display: block; width: 100%; height: 100%; }
   resize();
   S = newRun('title');
   S.birds.push(newBird('ridge2'), newBird('dish'));
-  if (best) $('#bestLine').textContent = `Best score: ${best}. Touch where you want the stone to go, then let go to fire.`;
+  if (best) $('#bestLine').textContent = `Best score: ${best}. Drag anywhere to move the crosshair, let go to fire.`;
   renderMute();
   // Test hook: only exists with ?test in the address, so automated checks can drive the game quickly.
-  if (new URLSearchParams(location.search).has('test')) window.__hac = { state: () => S, layout: () => L, update, fire, start, skipCut };
+  if (new URLSearchParams(location.search).has('test')) window.__hac = { state: () => S, layout: () => L, update, fire, start, skipCut, aimStart, aimMove, aimEnd, aimPoint };
   requestAnimationFrame(t => { last = t; requestAnimationFrame(frame); });
 })();
 </script>
