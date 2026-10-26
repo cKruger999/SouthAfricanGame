@@ -113,7 +113,32 @@ footer { text-align: center; font-size: 12px; font-weight: 700; color: var(--mut
         </div>
       </a>
     </li>
-    <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Hadeda Alarm Clock</div><div class="blurb">It's 5am. They're on the roof again.</div><div class="tag">Coming soon</div></div></li>
+    <li>
+      <a class="card" href="games/hadeda-alarm-clock/index.html">
+        <svg viewBox="0 0 92 92" aria-hidden="true">
+          <defs><linearGradient id="hacSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3560"/><stop offset="0.6" stop-color="#b8665a"/><stop offset="1" stop-color="#f4c27a"/></linearGradient></defs>
+          <rect width="92" height="92" fill="url(#hacSky)"/>
+          <circle cx="72" cy="64" r="11" fill="#ffd27a"/>
+          <path d="M-4 74 L26 58 L66 58 L96 74 V92 H-4Z" fill="#b5523b"/>
+          <rect x="26" y="56" width="40" height="4" fill="#8d3a28"/>
+          <g transform="translate(40 58) scale(0.95)" stroke-linecap="round">
+            <path d="M-4 -18 L-6 0 M4 -18 L5 0" stroke="#3a332c" stroke-width="2.4"/>
+            <path d="M-24 -30 L-42 -24 L-22 -21Z" fill="#4a443c"/>
+            <ellipse cx="0" cy="-27" rx="28" ry="13" fill="#6b6252" transform="rotate(-7 0 -27)"/>
+            <ellipse cx="-4" cy="-29" rx="18" ry="8" fill="#4f7a5a" transform="rotate(-7 -4 -29)"/>
+            <ellipse cx="22" cy="-36" rx="9" ry="7.5" fill="#5e5546"/>
+            <circle cx="24" cy="-38" r="1.6" fill="#1b1416"/>
+            <path d="M29 -37 Q44 -40 52 -30 M29 -35 Q40 -28 45 -16" stroke="#2a2622" stroke-width="3" fill="none"/>
+          </g>
+          <text x="46" y="20" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="13" fill="#fff4dc" stroke="#17151a" stroke-width="3" paint-order="stroke">HAA!</text>
+        </svg>
+        <div class="info">
+          <div class="name">Hadeda Alarm Clock</div>
+          <div class="blurb">05:00 on your day off and they're on the roof again. Grab the slingshot.</div>
+          <div class="foot"><span class="best" id="hacBest">Not played yet</span><span class="play">Play</span></div>
+        </div>
+      </a>
+    </li>
     <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Braai Master</div><div class="blurb">Keep the chops off the coals and the uncles off the tongs.</div><div class="tag">Coming soon</div></div></li>
     <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Load Shedding Dash</div><div class="blurb">Two hours of power. Charge everything.</div><div class="tag">Coming soon</div></div></li>
     <li class="soon"><div class="lock" aria-hidden="true">?</div><div><div class="name">Taxi Rank Rush</div><div class="blurb">There's always space for four more.</div><div class="tag">Coming soon</div></div></li>
@@ -125,11 +150,14 @@ footer { text-align: center; font-size: 12px; font-weight: 700; color: var(--mut
 <script>
   // Show each game's best score on its card (saved by the game itself on this device).
   // pageshow also fires when coming back from a game, so the score is never stale.
+  const BEST_KEYS = { bsdBest: 'bsd-best', hacBest: 'hac-best' };
   window.addEventListener('pageshow', () => {
-    try {
-      const best = +localStorage.getItem('bsd-best') || 0;
-      if (best) document.getElementById('bsdBest').textContent = `Best: ${best}`;
-    } catch (e) {}
+    for (const [id, key] of Object.entries(BEST_KEYS)) {
+      try {
+        const best = +localStorage.getItem(key) || 0;
+        if (best) document.getElementById(id).textContent = `Best: ${best}`;
+      } catch (e) {}
+    }
   });
 </script>
 </body>

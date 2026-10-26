@@ -13,7 +13,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: page('index.html'),
-        bottleStoreDash: page('games/bottle-store-dash/index.html')
+        bottleStoreDash: page('games/bottle-store-dash/index.html'),
+        hadedaAlarmClock: page('games/hadeda-alarm-clock/index.html')
       }
     }
   }
